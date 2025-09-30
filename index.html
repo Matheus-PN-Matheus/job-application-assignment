@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Rates Demo</title>
+</head>
+<body>
+  <h1>Booking Rates – Test Form</h1>
+
+  <form id="rateForm">
+    <label>Unit Name: <input type="text" id="unitName" required></label><br><br>
+    <label>Arrival: <input type="date" id="arrival" required></label><br><br>
+    <label>Departure: <input type="date" id="departure" required></label><br><br>
+    <label>Occupants: <input type="number" id="occupants" required></label><br><br>
+    <label>Ages (comma separated): <input type="text" id="ages" required></label><br><br>
+    <button type="submit">Check Rates</button>
+  </form>
+
+  <h2>Result:</h2>
+  <pre id="result">Waiting for input...</pre>
+
+  <script>
+    document.getElementById("rateForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Collect form data
+      const ages = document.getElementById("ages").value
+        .split(",")
+        .map(a => parseInt(a.trim()));
+
+      const payload = {
+        "Unit Name": document.getElementById("unitName").value,
+        "Arrival": document.getElementById("arrival").value,
+        "Departure": document.getElementById("departure").value,
+        "Occupants": parseInt(document.getElementById("occupants").value),
+        "Ages": ages
+      };
+
+      // Send to backend
+      const res = await fetch("api.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>
